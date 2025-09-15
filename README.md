@@ -52,9 +52,9 @@ These tasks capture reasoning, factual recall, and scientific knowledge.
 MobiBench evaluates models along two axes:
 
 - **Application-Level Metrics**  
-  - Latency (ms/token)  
-  - Throughput (tokens/sec)  
-  - Accuracy (task-specific)  
+  - Prefill and decode speed (tokens/sec)  
+  - Time-to-first-token (sec)  
+  - Accuracy (task-specific)
 
 - **System-Level Metrics**  
   - Peak memory usage  
@@ -67,6 +67,7 @@ MobiBench evaluates models along two axes:
 - Identical models are tested across different runtimes to isolate framework overhead.  
 - Performance is averaged over multiple runs for reproducibility.  
 
+For more detailed information on how to reporduce the benchmark, go to docs.
 
 ## Goals
 
