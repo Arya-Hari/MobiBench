@@ -15,7 +15,7 @@ MobiBench fills this gap by:
 - Measuring both **user-facing metrics** (latency, throughput, accuracy) and **system-level metrics** (memory usage, quantization efficiency, energy consumption).  
 
 
-## ⚙Frameworks Evaluated
+## Frameworks Evaluated
 
 - **[AI Edge Torch](https://github.com/facebookresearch/ai-edge-torch)** – PyTorch runtime for mobile and embedded AI.  
 - **[ExecuTorch](https://pytorch.org/executorch/)** – Portable, modular runtime extending PyTorch to edge devices.  
@@ -60,7 +60,7 @@ MobiBench evaluates models along two axes:
   - Peak memory usage  
   - Quantization efficiency  
   - Energy consumption
-  - 
+    
 ## Experimental Setup
 
 - Each framework–device–task combination is run under **controlled conditions**.  
