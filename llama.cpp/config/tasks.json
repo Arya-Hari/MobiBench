@@ -1,0 +1,6 @@
+{
+  "question_answering": ["data/context_qa_dataset.csv"],
+  "summarization": ["data/science_qa_dataset.csv"],
+  "math": ["data/mmlu_dataset.csv"],
+  "classification": ["data/summarization_dataset.csv"]
+}
