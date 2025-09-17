@@ -16,6 +16,7 @@ Build llama.cpp for Linux according to the instruction provided in the [official
 Create a models directory within the root directory and store all models required to be evaluated within this directory:
 
 ```bash
+cd ../..
 mkdir models
 cd models
 ```
@@ -23,41 +24,41 @@ cd models
 ## Running Test File
 
 ### 1. Replace paths
-Replace the `LLAMA_CPP_BIN` path in `src/test_model_runner.py` with the path to your llama-cli binary. For example:
+Replace the `LLAMA_CPP_BIN` path in `llama.cpp/linux/src/model_runner.py` with the path to your llama-cli binary. For example:
 
 ```python
 LLAMA_CPP_BIN = os.path.expanduser("~/llama.cpp/build/bin/llama-cli")
 ```
 
-Replace the model path in `test.py` with the path to your model in GGUF format. For example:
+Replace the model path in `llama.cpp/linux/test.py` with the path to your model in GGUF format. For example:
 
 ```python
-res = run_inference("~/models/gemma_2b.gguf", "Hi how are you?", 50)
+res = run_inference("./models/gemma_2b.gguf", "Hi how are you?", 50)
 ```
 
 ### 2. Run the test file
-Run the test file using the command:
+From the main directory, run the test file using the command:
 
 ```bash
-python ~/llama.cpp/linux/test.py
+python ./llama.cpp/linux/test.py
 ```
 
-Confirm the outputs.
+Confirm the outputs. Go back to the root directory.
 
 ## Run Evaluations
 
 ### 1. Replace path
-Replace the `LLAMA_CPP_BIN` path in `src/model_runner.py` with the path to your llama-cli binary. For example:
+Replace the `LLAMA_CPP_BIN` path in `llama.cpp/linux/src/model_runner.py` with the path to your llama-cli binary. For example:
 
 ```python
 LLAMA_CPP_BIN = os.path.expanduser("~/llama.cpp/build/bin/llama-cli")
 ```
 
 ### 2. Run evaluation
-To evaluate a model on a dataset, use:
+To evaluate a model on a dataset from the root directory, use:
 
 ```bash
-python3 ~/llama.cpp/linux/main.py \
+python3 ./llama.cpp/linux/main.py \
     --dataset_type <dataset_type> \
     --csv_path <path_to_dataset> \
     --model_path <path_to_model> \
@@ -75,7 +76,7 @@ python3 ~/llama.cpp/linux/main.py \
 #### Example Usage
 
 ```bash
-python3 ~/llama.cpp/linux/main.py \
+python3 ./llama.cpp/linux/main.py \
     --dataset_type context_qa \
     --csv_path ~/data/csv/context_qa_dataset.csv \
     --model_path ~/models/tinyllama-1.1b-chat-v1.0.Q4_0.gguf \
