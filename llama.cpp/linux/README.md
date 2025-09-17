@@ -20,28 +20,27 @@ cd ../..
 mkdir models
 cd models
 ```
-Once done go back to the root directory.
 
 ## Running Test File
 
 ### 1. Replace paths
-Replace the `LLAMA_CPP_BIN` path in `./llama.cpp/linux/src/test_model_runner.py` with the path to your llama-cli binary. For example:
+Replace the `LLAMA_CPP_BIN` path in `llama.cpp/linux/src/test_model_runner.py` with the path to your llama-cli binary. For example:
 
 ```python
 LLAMA_CPP_BIN = os.path.expanduser("~/llama.cpp/build/bin/llama-cli")
 ```
 
-Replace the model path in `/llama.cpp/linux/test.py` with the path to your model in GGUF format. For example:
+Replace the model path in `llama.cpp/linux/test.py` with the path to your model in GGUF format. For example:
 
 ```python
-res = run_inference("~/models/gemma_2b.gguf", "Hi how are you?", 50)
+res = run_inference("./models/gemma_2b.gguf", "Hi how are you?", 50)
 ```
 
 ### 2. Run the test file
-From the root directory, run the test file using the command:
+From the main directory, run the test file using the command:
 
 ```bash
-python ~/llama.cpp/linux/test.py
+python ./llama.cpp/linux/test.py
 ```
 
 Confirm the outputs. Go back to the root directory.
@@ -49,7 +48,7 @@ Confirm the outputs. Go back to the root directory.
 ## Run Evaluations
 
 ### 1. Replace path
-Replace the `LLAMA_CPP_BIN` path in `/llama.cpp/linux/src/model_runner.py` with the path to your llama-cli binary. For example:
+Replace the `LLAMA_CPP_BIN` path in `llama.cpp/linux/src/model_runner.py` with the path to your llama-cli binary. For example:
 
 ```python
 LLAMA_CPP_BIN = os.path.expanduser("~/llama.cpp/build/bin/llama-cli")
