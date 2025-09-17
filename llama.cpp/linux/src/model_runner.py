@@ -4,12 +4,13 @@ import subprocess, time, re, threading, os
 from src.system_monitor import SystemMonitor
 
 
-def run_inference(model_path, prompt, n_predict=128):
+def run_inference(model_path, prompt, n_predict=128, use_gpu=False, gpu_layers=0):
     """
     Run llama.cpp and parse performance metrics.
     Works with both old and new llama.cpp log formats.
+    Supports GPU acceleration via CUDA or Vulkan.
     """
-    
+
     # Replace with the path to your llama-cli binary
     LLAMA_CPP_BIN = os.path.expanduser("path/to/your/llama-cli/binary")
 
@@ -20,6 +21,15 @@ def run_inference(model_path, prompt, n_predict=128):
         "-n", str(n_predict),
         "-no-cnv"  # suppress color + extra stuff in stdout
     ]
+
+    # Add GPU flags if requested
+    if use_gpu:
+        if gpu_layers == -1:
+            cmd.extend(["-ngl", "999"])  # Offload all layers to GPU (use high number)
+        elif gpu_layers > 0:
+            cmd.extend(["-ngl", str(gpu_layers)])  # Number of layers to offload to GPU
+        # For Vulkan, llama.cpp automatically detects if built with Vulkan support
+        # For CUDA, ensure the binary is built with CUDA support
 
     start_time = time.time()
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
