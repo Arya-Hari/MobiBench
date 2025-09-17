@@ -2,8 +2,10 @@ This document provides instructions on how to run the evaluation framework for m
 
 ## Setup
 
-### 1. Install dependencies
+### 1. Clone the repository and install dependencies
 ```bash
+git clone https://github.com/Arya-Hari/MobiBench.git
+cd MobiBench/llama.cpp/linux
 pip install -r requirements.txt
 ```
 
