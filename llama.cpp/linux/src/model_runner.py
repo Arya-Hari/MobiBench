@@ -34,7 +34,7 @@ def run_inference(model_path, prompt, n_predict=128):
     monitor_thread.join()
 
     # --- Extract timings ---
-    prefill_tps, decode_tps, load_time_ms = None, None, None
+    prefill_tps, decode_tps, load_time_ms, prompt_eval_time = None, None, None, None
     for line in stderr.splitlines():
         line = line.strip()
         
@@ -61,7 +61,7 @@ def run_inference(model_path, prompt, n_predict=128):
     timings = {
         "prefill_tps": prefill_tps,
         "decode_tps": decode_tps,
-        "time_to_first_token_s": load_time_ms + prompt_eval_time,
+        "time_to_first_token_s": load_time_ms + prompt_eval_time if load_time_ms and prompt_eval_time else None,
     }
 
     system_metrics = monitor.summary()
