@@ -78,8 +78,8 @@ python3 ./llama.cpp/linux/main.py \
 ```bash
 python3 ./llama.cpp/linux/main.py \
     --dataset_type context_qa \
-    --csv_path ~/data/csv/context_qa_dataset.csv \
-    --model_path ~/models/tinyllama-1.1b-chat-v1.0.Q4_0.gguf \
-    --output_json ~/llama.cpp/linux/results/context_qa_tinyllama.json \
+    --csv_path ./data/csv/context_qa_dataset.csv \
+    --model_path ./models/tinyllama-1.1b-chat-v1.0.Q4_0.gguf \
+    --output_json ./llama.cpp/linux/results/context_qa_tinyllama.json \
     --n_predict 128
 ```
