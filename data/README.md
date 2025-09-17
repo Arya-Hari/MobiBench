@@ -5,30 +5,31 @@ We provide curated subsets of four widely used benchmark datasets for evaluation
 ## Datasets Used
 
 ### 1. [RepLiQA](https://huggingface.co/datasets/ServiceNow/repliqa)
-- Source: RepLiQA benchmark (five data files).
+- Source: RepLiQA benchmark for context-based QA.
 - Sampling: **200 random entries** selected from each of the five data files.
 - Final size: **1,000 entries**.
-- Find the final dataset used for evaluation in both [csv]() and [parquet]() formats.
+- Find the final dataset used for evaluation in both [csv](https://github.com/Arya-Hari/MobiBench/blob/main/data/csv/context_qa_dataset.csv) and [parquet](https://github.com/Arya-Hari/MobiBench/blob/main/data/parquet/context_qa_dataset.parquet) formats.
 
 
 ### 2. [CNN/DailyMail](https://huggingface.co/datasets/abisee/cnn_dailymail)
 - Source: CNN/DailyMail summarization dataset.
 - Sampling: **334 random entries** selected from each of the three test files.
 - Final size: **1,002 entries** (truncated to 1,000).
-- Find the final dataset used for evaluation in both [csv]() and [parquet]() formats.
+- Find the final dataset used for evaluation in both [csv](https://github.com/Arya-Hari/MobiBench/blob/main/data/csv/summarization_dataset.csv) and [parquet](https://github.com/Arya-Hari/MobiBench/blob/main/data/parquet/summarization_dataset.parquet) formats.
 
 
 ### 3. [SciQ](https://huggingface.co/datasets/allenai/sciq)
 - Source: Science Question Answering (SciQ) dataset.
 - Sampling: The official **test set** was directly used.
 - Final size: **1,000 entries**.
-- Find the final dataset used for evaluation in both [csv]() and [parquet]() formats.
+- Find the final dataset used for evaluation in both [csv](https://github.com/Arya-Hari/MobiBench/blob/main/data/csv/science_qa_dataset.csv) and [parquet](https://github.com/Arya-Hari/MobiBench/blob/main/data/parquet/science_qa_dataset.parquet) formats.
 
 
 ### 4. [MMLU](https://huggingface.co/datasets/cais/mmlu)
 - Source: Massive Multitask Language Understanding (MMLU).
 - Sampling: **1000 random entries** selected from the test data file under the "all" category.
 - Final size: **1,000 entries**.
+- Find the final dataset used for evaluation in both [csv](https://github.com/Arya-Hari/MobiBench/blob/main/data/csv/mmlu_dataset.csv) and [parquet](https://github.com/Arya-Hari/MobiBench/blob/main/data/parquet/mmlu_dataset.parquet) formats.
 
 ---
 
