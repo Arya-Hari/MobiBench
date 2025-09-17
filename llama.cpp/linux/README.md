@@ -24,7 +24,7 @@ cd models
 ## Running Test File
 
 ### 1. Replace paths
-Replace the `LLAMA_CPP_BIN` path in `llama.cpp/linux/src/test_model_runner.py` with the path to your llama-cli binary. For example:
+Replace the `LLAMA_CPP_BIN` path in `llama.cpp/linux/src/model_runner.py` with the path to your llama-cli binary. For example:
 
 ```python
 LLAMA_CPP_BIN = os.path.expanduser("~/llama.cpp/build/bin/llama-cli")
