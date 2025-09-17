@@ -16,6 +16,7 @@ Build llama.cpp for Linux according to the instruction provided in the [official
 Create a models directory within the root directory and store all models required to be evaluated within this directory:
 
 ```bash
+cd ../..
 mkdir models
 cd models
 ```
