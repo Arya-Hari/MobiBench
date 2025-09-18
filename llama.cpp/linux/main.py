@@ -41,8 +41,6 @@ def main():
             f.write("\n")
 
         print(f"Checkpoint saved ({i}/{len(prompts)})")
-        if  i == 3:
-            break
 
     print(f"All results written to {args.output_json}")
 
