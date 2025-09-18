@@ -151,6 +151,7 @@ python3 ./llama.cpp/linux/main.py \
     --output_json <path_to_output> \
     --n_predict 128
 ```
+Ensure that the output json path exists.
 
 #### Available `dataset_type` Options
 
@@ -167,7 +168,7 @@ python3 ./llama.cpp/linux/main.py \
     --dataset_type context_qa \
     --csv_path ./data/csv/context_qa_dataset.csv \
     --model_path ./models/tinyllama-1.1b-chat-v1.0.Q4_0.gguf \
-    --output_json ./llama.cpp/linux/results/context_qa_tinyllama.json \
+    --output_json ./llama.cpp/linux/results/context_qa_tinyllama.jsonl \
     --n_predict 128
 ```
 
@@ -177,7 +178,7 @@ python3 ./llama.cpp/linux/main.py \
     --dataset_type context_qa \
     --csv_path ./data/csv/context_qa_dataset.csv \
     --model_path ./models/tinyllama-1.1b-chat-v1.0.Q4_0.gguf \
-    --output_json ./llama.cpp/linux/results/context_qa_tinyllama_gpu.json \
+    --output_json ./llama.cpp/linux/results/context_qa_tinyllama_gpu.jsonl \
     --n_predict 128 \
     --use_gpu \
     --gpu_layers 20  # Offload 20 layers to GPU, adjust based on your GPU memory
@@ -189,7 +190,7 @@ python3 ./llama.cpp/linux/main.py \
     --dataset_type context_qa \
     --csv_path ./data/csv/context_qa_dataset.csv \
     --model_path ./models/tinyllama-1.1b-chat-v1.0.Q4_0.gguf \
-    --output_json ./llama.cpp/linux/results/context_qa_tinyllama_gpu_full.json \
+    --output_json ./llama.cpp/linux/results/context_qa_tinyllama_gpu_full.jsonl \
     --n_predict 128 \
     --use_gpu \
     --gpu_layers -1  # Offload all layers to GPU
