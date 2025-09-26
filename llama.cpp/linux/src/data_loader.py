@@ -55,7 +55,7 @@ class ScientificMCQLoader(BaseLoader):
                 f"2) {row['distractor2']}\n"
                 f"3) {row['distractor3']}\n"
                 f"4) {row['correct_answer']}\n\n"
-                "Answer with only the option option (1/2/3/4)."
+                "Choose the correct option and answer with only the option number (1/2/3/4). Option:"
             )
             prompts.append({
                 "id": i,
@@ -91,7 +91,7 @@ class MMLUMCQLoader(BaseLoader):
                 f"2) {choices[1]}\n"
                 f"3) {choices[2]}\n"
                 f"4) {choices[3]}\n\n"
-                "Answer with only the option number (1/2/3/4)."
+                "Choose the correct option and answer with only the option number (1/2/3/4). Option:"
             )
             prompts.append({
                 "id": i,
