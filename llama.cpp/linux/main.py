@@ -9,7 +9,7 @@ from src.model_runner import run_inference
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset_type", choices=["context_qa", "mcq", "summarization"], required=True)
+    parser.add_argument("--dataset_type", choices=["context_qa", "scientific_mcq", "mmlu_mcq", "summarization"], required=True)
     parser.add_argument("--csv_path", required=True)
     parser.add_argument("--model_path", required=True)
     parser.add_argument("--output_json", default="results/output.jsonl")
@@ -23,7 +23,7 @@ def main():
     prompts = loader.build_prompts()
 
     os.makedirs(os.path.dirname(args.output_json), exist_ok=True)
-
+    
     for i, entry in enumerate(prompts, start=1):
         print(f"Processing {i}/{len(prompts)}")
         result = run_inference(args.model_path, entry["prompt"], args.n_predict, args.use_gpu, args.gpu_layers)
