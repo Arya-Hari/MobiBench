@@ -102,7 +102,7 @@ class MMLUMCQLoader(BaseLoader):
                     "1": choices[0],
                     "2": choices[1],
                     "3": choices[2],
-                    "3": choices[3]
+                    "4": choices[3]
                 },
                 "gold": row['answer'],                
                 "model_output": None
