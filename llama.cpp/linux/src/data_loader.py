@@ -81,7 +81,8 @@ class MMLUMCQLoader(BaseLoader):
     def build_prompts(self):
         prompts = []
         for i, row in self.data.iterrows():
-            choices = re.findall(r"'(.*?)'", row['choices'])
+            matches = re.findall(r"(['\"])(.*?)\1", row['choices'])
+            choices = [match[1] for match in matches]
             prompt = (
                 "Choose the correct option for the given question.\n\n"
                 f"Question: {row['question']}\n\n"
