@@ -145,10 +145,18 @@ Each line in the JSONL file corresponds to one prompt:
 ```json
 {
   "prompt": "What is the capital of France?",
-  "model_output": "The capital of France is Paris.",
-  "logs": "Inference successful",
-  "timings": {},
-  "system_metrics": {"cpu": 12.5, "ram": 2.1},
+  "model_output": " The capital of France is Paris.",
+  "logs": "Loading ExecuTorch model...\nModel loaded successfully.\nLocal tokenizer loaded.\nStarting inference for ~128 tokens (using text_generation)...\nInference successful. Generated 8 tokens in 0.52 seconds.",
+  "timings": {
+    "prefill_tps": null,
+    "decode_tps": null,
+    "time_to_first_token_s": null,
+    "overall_tps": 15.38
+  },
+  "system_metrics": {
+    "avg_cpu_percent": 85.5,
+    "peak_memory_mb": 720.45
+  },
   "wallclock_s": 0.58
 }
 ```
