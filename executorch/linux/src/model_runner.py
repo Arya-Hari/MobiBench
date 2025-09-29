@@ -1,74 +1,93 @@
 import os
 import time
 import threading
+import torch
 from transformers import AutoTokenizer
 from optimum.executorch import ExecuTorchModelForCausalLM
 from src.system_monitor import SystemMonitor
 
-
 def run_inference(model_path, prompt, n_predict=128, use_gpu=False, gpu_layers=0):
     """
     Run ExecuTorch inference and gather performance metrics.
+    This version uses the reliable `text_generation` method.
     """
-    try:
-        # Load ExecuTorch model from exported directory
-        model = ExecuTorchModelForCausalLM.from_pretrained(model_path)
+    logs = []
+    start_wall_time = time.time()
 
-        # Try local tokenizer first (offline use)
+    try:
+        logs.append("Loading ExecuTorch model...")
+        model = ExecuTorchModelForCausalLM.from_pretrained(model_path)
+        logs.append("Model loaded successfully.")
+
         try:
             tokenizer = AutoTokenizer.from_pretrained(model_path)
+            logs.append("Local tokenizer loaded.")
         except Exception:
-            print("⚠️ Tokenizer not found locally, falling back to HuggingFace repo...")
             tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-135M-Instruct")
+            logs.append("Remote tokenizer loaded: HuggingFaceTB/SmolLM2-135M-Instruct")
 
     except Exception as e:
         return {
-            "output": None,
-            "logs": f"Error loading model/tokenizer: {e}",
-            "timings": {},
-            "system_metrics": {},
-            "wallclock_s": 0,
+            "output": None, "logs": "\n".join(logs) + f"\nError loading model/tokenizer: {e}",
+            "timings": {}, "system_metrics": {}, "wallclock_s": time.time() - start_wall_time,
         }
 
-    # System monitor setup
     pid = os.getpid()
     monitor = SystemMonitor(pid)
     monitor_thread = threading.Thread(target=monitor.run, args=(0.2,), daemon=True)
     monitor_thread.start()
 
-    start_time = time.time()
-
-    # Inference
+    num_prompt_tokens = len(tokenizer.encode(prompt))
+    final_output = None
+    overall_tps = None
+    
     try:
+        logs.append(f"Starting inference for ~{n_predict} tokens (using text_generation)...")
+        
+        # Calculate the total sequence length
+        max_len = num_prompt_tokens + n_predict
+        
+        inference_start_time = time.time()
+        
+        # *** CORE CHANGE: Revert to the stable, high-level text_generation method ***
         generated_text = model.text_generation(
             tokenizer=tokenizer,
             prompt=prompt,
-            max_seq_len=n_predict
+            max_seq_len=max_len
         )
-        output = generated_text
-        logs = "Inference successful"
+        
+        inference_end_time = time.time()
+        total_inference_time = inference_end_time - inference_start_time
+        
+        # The output of text_generation is only the newly generated part
+        final_output = generated_text
+        
+        # To get TPS, we must tokenize the output string to count the tokens
+        num_generated_tokens = len(tokenizer.encode(final_output))
+        
+        if total_inference_time > 0 and num_generated_tokens > 0:
+            overall_tps = num_generated_tokens / total_inference_time
+            
+        logs.append(f"Inference successful. Generated {num_generated_tokens} tokens in {total_inference_time:.2f} seconds.")
+
     except Exception as e:
-        output = None
-        logs = f"Error during inference: {e}"
+        logs.append(f"Error during inference: {e}")
 
-    end_time = time.time()
+    end_wall_time = time.time()
 
-    # Stop monitor thread safely
     monitor.stop()
     monitor_thread.join(timeout=1)
 
     timings = {
-        "prefill_tps": None,
-        "decode_tps": None,
-        "time_to_first_token_s": None,
+        "prefill_tps": None, "decode_tps": None, "time_to_first_token_s": None,
+        "overall_tps": overall_tps
     }
-
     system_metrics = monitor.summary()
 
     return {
-        "output": output,
-        "logs": logs,
+        "output": f"{prompt}{final_output}" if final_output is not None else prompt,
+        "logs": "\n".join(logs),
         "timings": timings,
         "system_metrics": system_metrics,
-        "wallclock_s": end_time - start_time,
+        "wallclock_s": end_wall_time - start_wall_time,
     }
