@@ -9,7 +9,6 @@ This document provides instructions on how to run the evaluation framework for m
 ```bash
 git clone https://github.com/Arya-Hari/MobiBench.git
 cd MobiBench/executorch/linux
-pip install -r requirements.txt
 ```
 
 Dependencies include:
@@ -19,6 +18,8 @@ Dependencies include:
 - optimum-executorch
 - pandas
 - psutil
+
+Follow https://github.com/huggingface/optimum-executorch to install optimum-executorch before executing 
 
 ### 2. Export Models to ExecuTorch
 
