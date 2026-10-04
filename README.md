@@ -1,91 +1,88 @@
-# MobiBench - Benchmarking LLMs for On-Device Performance
+# MobiBench: Benchmarking Lightweight LLM Inference using llama.cpp on CPU and GPU Platforms
 
-MobiBench is a unified benchmarking suite designed to rigorously evaluate the performance of **large language models (LLMs)** on mobile and edge devices.  
-It provides a reproducible framework for assessing **runtime efficiency, accuracy, and resource trade-offs** across multiple execution frameworks, hardware platforms, and natural language tasks.  
+MobiBench is a benchmarking framework for evaluating lightweight, quantized (GGUF) LLMs run with [llama.cpp](https://github.com/ggerganov/llama.cpp) on **consumer laptop CPU and GPU platforms**. It combines system-level measurements (latency, throughput, memory, CPU utilization) with task-level quality metrics (accuracy, BERTScore, LLM-based semantic evaluation) under one runtime, dataset, prompt, and scoring pipeline.
 
+**Scope.** Validation is limited to the consumer laptop CPU/GPU platforms and the model configurations listed below. It does not cover ARM-based smartphones, mobile SoCs/NPUs, single-board computers, or other embedded accelerators. Extending MobiBench to that hardware is future work.
 
-## Motivation
+## Models evaluated
 
-With the growing push toward **privacy-preserving, low-latency AI**, deploying LLMs directly on mobile and edge hardware has become crucial. However, existing benchmarks primarily target cloud or server environments and fail to capture the **unique constraints of mobile SoCs** (e.g., limited memory, thermal budgets, and power efficiency).  
+| Model | Params | Quantization | CPU | GPU |
+|---|---|---|---|---|
+| Gemma | 1B | Q4_0 | yes | yes |
+| TinyLlama | 1.1B | Q4_0 | yes | yes |
+| LLaMA | 3B | Q4_0 | no | yes |
+| Phi-2 | 2.7B | Q4_0 | no | yes |
+| Phi-2 | 2.7B | Q3_K_M | no | yes |
+| Phi-2 | 2.7B | Q2_K | no | yes |
 
-MobiBench fills this gap by:
-- Comparing **mobile-optimized frameworks** (AI Edge Torch, ExecuTorch, llama.cpp, Bitnet).  
-- Evaluating **lightweight models** (TinyLlama, Gemma, LLaMA 1B/3B, Phi family, Bitnet 1B).  
-- Testing on **consumer devices** like Google Pixel, Samsung Galaxy, iPhone, and laptops.  
-- Measuring both **user-facing metrics** (latency, throughput, accuracy) and **system-level metrics** (memory usage, quantization efficiency, energy consumption).  
+Direct CPU-vs-GPU comparison is available only for Gemma 1B and TinyLlama.
 
+## Hardware
 
-## Frameworks Evaluated
+- Gaming laptop: Intel Core i7 (12th gen) with NVIDIA GeForce RTX 3060 (6 GB)
+- Laptop: Intel Core i5, no dedicated GPU
 
-- **[AI Edge Torch](https://github.com/facebookresearch/ai-edge-torch)** – PyTorch runtime for mobile and embedded AI.  
-- **[ExecuTorch](https://pytorch.org/executorch/)** – Portable, modular runtime extending PyTorch to edge devices.  
-- **[llama.cpp](https://github.com/ggerganov/llama.cpp)** – Lightweight, C++ inference engine for quantized LLaMA models.
+## Benchmark configuration
 
+| Setting | Value |
+|---|---|
+| llama.cpp | build 5970, commit `07a19e27a26f76d34be62da53807f93131fb3cab` |
+| CUDA Toolkit / NVIDIA driver | 12.6 / 561.17 |
+| Build generator | Ninja |
+| GPU offload | `-ngl 999` |
+| Generation limit | `-n 128` |
+| Conversation mode | `-no-cnv` |
+| Context length | 512 tokens |
+| Temperature | 0 (greedy) |
+| Repetition | One execution per model/dataset/device configuration |
 
-## Models Benchmarked
+Each sample is run as an independent `llama-cli` invocation.
 
-- TinyLlama (1B)
-- Gemma family  
-- LLaMA (1B, 3B)
-- Phi (<3B)  
-- Bitnet (1B) 
+## Tasks and datasets
 
-## Hardware Platforms
-
-- Google Pixel (7a/9a)  
-- Samsung Galaxy S24 (tentative)  
-- iPhone 
-- MacBook  
-- Laptop (Intel Core i5)  
-
-
-## Tasks and Datasets
-
-- **Summarization** → CNN/Daily Mail  
-- **General QA** → MMLU, ReplicQA, SciQ  
-
-These tasks capture reasoning, factual recall, and scientific knowledge.  
-
+| Task | Dataset | Sampling | Size |
+|---|---|---|---|
+| Contextual QA | [RepLiQA](https://huggingface.co/datasets/ServiceNow/repliqa) | 200 random entries from each of 5 data files | 1,000 |
+| Summarization | [CNN/DailyMail](https://huggingface.co/datasets/abisee/cnn_dailymail) | 334 random entries from each of 3 test files | 1,002 |
+| Scientific QA | [SciQ](https://huggingface.co/datasets/allenai/sciq) | Official test set | 1,000 |
+| Multiple-choice reasoning | [MMLU](https://huggingface.co/datasets/cais/mmlu) | 1,000 random entries from the `all` test split | 1,000 |
 
 ## Metrics
 
-MobiBench evaluates models along two axes:
+**System-level**
+- **Time (s):** mean per-sample wall-clock latency, including process start, model loading, prefill, decoding, and teardown. It is not decode-only latency.
+- **Prefill TPS / Decode TPS:** tokens per second for prompt processing and generation.
+- **CPU (%):** average CPU usage of the inference process only. Values above 100% mean use of multiple logical cores.
+- **Mem (MB):** peak host memory (resident set size, via `psutil`) of the inference process.
 
-- **Application-Level Metrics**  
-  - Prefill and decode speed (tokens/sec)  
-  - Time-to-first-token (sec)  
-  - Accuracy (task-specific)
+**Task-level**
+- **Summarization:** BERTScore (precision, recall, F1) and an LLM-based semantic score.
+- **QA / multiple choice:** accuracy. Prompts are zero-shot with no chat template. Answers are parsed from the generated continuation only, not the echoed prompt. Unparsable responses count as incorrect and stay in the denominator.
 
-- **System-Level Metrics**  
-  - Peak memory usage  
-  - Quantization efficiency  
-  - Energy consumption
-    
-## Experimental Setup
+**LLM-based evaluation.** `openai/gpt-oss-120b` via the Groq API scores the similarity (0.0 to 1.0) between model and reference summaries on the first 100 valid records, a fixed sequential subset rather than a random sample. Temperature is 0. Seed, top-p, and max output tokens were not set. There are no repeated evaluator runs and no human validation, so scores are descriptive only.
 
-- Each framework–device–task combination is run under **controlled conditions**.  
-- Identical models are tested across different runtimes to isolate framework overhead.  
-- Performance is averaged over multiple runs for reproducibility.  
+## Repository structure
 
-For more detailed information on how to reporduce the benchmark, go to docs.
+- `data/`: dataset subsets used in the experiments
+- `eval_metrics/`: evaluation and metric scripts
+- `llama.cpp/`: llama.cpp used for the benchmark runs
+- `results/`: raw outputs and results
 
-## Goals
+## Reproducing the experiments
 
-- Provide a **standardized evaluation suite** for on-device LLMs.  
-- Enable researchers and developers to identify **framework–hardware trade-offs**.  
-- Lay the foundation for **future model/runtime/hardware co-design** in mobile AI.  
+1. Build llama.cpp at the commit listed above. Use a CUDA build (CUDA 12.6) for GPU runs.
+2. Run `llama-cli` once per sample with the settings in the configuration table (`-n 128 -no-cnv`, context 512, temperature 0, and `-ngl 999` for GPU runs).
+3. Score the generated outputs with the scripts in `eval_metrics/`.
+4. For the LLM-based evaluation, set a `GROQ_API_KEY` environment variable for the Groq API.
 
-## References
+## Limitations
 
-Key works informing this project include:  
-- Han et al., *Deep Compression* (ICLR 2016)  
-- Frantar et al., *GPTQ* (NeurIPS 2022)  
-- Lin et al., *AWQ* (2023)  
-- AI EdgeTorch (Meta AI, 2023)  
-- PyTorch Team, *ExecuTorch* (2023)  
-- Xu et al., *EdgeFormer* (ICML 2023)  
-
-(See the full paper for an extended reference list.)  
+- Consumer laptop CPU/GPU only. No mobile SoC, NPU, or embedded results.
+- CPU runs exist only for Gemma 1B and TinyLlama.
+- One run per configuration, so run-to-run variance is not measured.
+- LLM-evaluator settings (seed, top-p) were not controlled or recorded, and there is no human validation.
+- llama.cpp is the only runtime evaluated. Other runtimes and model families are future work.
 
 ## Citation
-If you use this repository in academic work, please cite our paper (preprint coming soon).
+
+If you use this repository in academic work, please cite our paper (preprint forthcoming).
